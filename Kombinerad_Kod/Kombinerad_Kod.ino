@@ -18,7 +18,6 @@ int wet = 370;
 int dry = 600;
 
 int pos;
-float temp;
 
 void setup() {
   // put your setup code here, to run once:
@@ -29,7 +28,6 @@ void setup() {
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
 
-  
   digitalWrite(sensorPower, LOW);
 
   myServo.attach(6);
@@ -45,6 +43,11 @@ void loop() {
   updateServo();
 }
 //Början av funktioner kopplade till vattenpump och jordfuktssensor
+
+/*
+ * Denna funktion sätter igång jordfuktssensor och läser av värdet.
+ * Retunerar: Värdet på jordfuktssensorn från analogRead(sensorPin).
+ */
 
 int readSensor() { // Denna funktion sätter igång jordfuktssensor och läser av värdet. Sedan returnerar den värdet med variabeln 'val' efter den har avaktiverats.
   digitalWrite(sensorPower, HIGH);  // Slå på jordfuktssensorn
@@ -99,13 +102,13 @@ void updatePump(){
 
 /* 
  * readRTC()funktionen hämtar temperaturen från RTC-modulen och retunerar den i celsius med variabelnamnet 'temp'.
- * Funktionen visas även i seriell monitorn.
- * int användes för att det ska vara möjligt att använda funktionen i en annan
+ * Parameter:
+ * -temp
  */
 
 int readRTC(){
   RtcTemperature rtcTemp = Rtc.GetTemperature();
-  temp = rtcTemp.AsFloatDegC(); // tilldelar
+  float temp = rtcTemp.AsFloatDegC(); // tilldelar temp
   Serial.print("temperature C: ");
   Serial.println(temp); //Visar temperatur i seriell-monitor
   return temp;
@@ -120,7 +123,7 @@ int readRTC(){
  */
 
 void updateServo(){
-  temp = readRTC();
+  float temp = readRTC();
   myServo.write(pos);
   if (temp < 24.0){
     pos = 90 ;
@@ -136,8 +139,10 @@ void updateServo(){
 
 /*
  * setColor() funktionen används för färgen som ska visas på RGB lysdioden.
- * Detta är en input-funktion eftersom det behövs olika värden för att få funktionen att funka. 
- * I detta fall är värdena till för RGB kod mellan 0-255.
+ * Input: 
+ * - R: Ett heltal mellan 0-255.
+ * - B: Ett heltal mellan 0-255.
+ * - G: Ett heltal mellan 0-255.
  */
 
 int setColor(int R, int G, int B){
