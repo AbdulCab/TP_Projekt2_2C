@@ -1,18 +1,19 @@
-#include <Servo.h>
-#include <Wire.h>
-#include <RtcDS3231.h>
+#include <Servo.h>  // Inkluderar biblioteket Servo.h för använding av servo specifika funktioner
+#include <Wire.h>   // Inkluderar biblioteket Wire.h för använding av RTC-modul
+#include <RtcDS3231.h> // Inkluderar biblioteket RtcDS3231.h för användning av RTC specifika funktioner
 
-#define sensorPower 8
-#define sensorPin A0
-#define pump 9
+#define sensorPower 8 // 
+#define sensorPin A0  // kopplar Jordfuktssensorn till A0
+#define pump 9  // Definerar variabeln 'pump' till pin 9 på arduino
 
-#define redPin 2 
-#define greenPin 3
-#define bluePin 4
+#define redPin 2  // Pin på RGB lysdiod som ansvarar för röda färger
+#define greenPin 3  // Pin på RGB lysdiod som ansvarar för gröna färger
+#define bluePin 4 // Pin på RGB lysdiod som ansvarar för blåa färger
 
 RtcDS3231<TwoWire> Rtc(Wire);
-Servo myServo;
+Servo myServo;  
 
+// 'wet' och 'dry' är gränsvärden för att styra vattenpumpen
 int wet = 370;
 int dry = 600;
 
@@ -28,7 +29,7 @@ void setup() {
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
 
-  // Initially keep the sensor OFF
+  
   digitalWrite(sensorPower, LOW);
 
   myServo.attach(6);
@@ -37,14 +38,12 @@ void setup() {
   Wire.begin();
   Serial.begin(9600);
 }
-
 void loop() {
   // put your main code here, to run repeatedly:
   updateSoil();
   updatePump();
   updateServo();
 }
-
 //Början av funktioner kopplade till vattenpump och jordfuktssensor
 
 int readSensor() { // Denna funktion sätter igång jordfuktssensor och läser av värdet. Sedan returnerar den värdet med variabeln 'val' efter den har avaktiverats.
@@ -54,7 +53,6 @@ int readSensor() { // Denna funktion sätter igång jordfuktssensor och läser a
   digitalWrite(sensorPower, LOW);   // Släcker jordfuktssensorn
   return val;             // Returnerar det analoga fuktighetsvärdet
 }
-
 void updateSoil(){ // Denna funktion använder variabeln 'val' för att visa värdet i seriell monitorn och if-villkor för att få en förståelse över jordfuktigheten. 
   int val = readSensor();
   Serial.println();
@@ -124,7 +122,6 @@ int readRTC(){
 void updateServo(){
   temp = readRTC();
   myServo.write(pos);
-  
   if (temp < 24.0){
     pos = 90 ;
     Serial.print("Enclosure temperature is good - Servo OFF");
@@ -147,5 +144,4 @@ int setColor(int R, int G, int B){
   analogWrite(redPin, R);
   analogWrite(greenPin, G);
   analogWrite(bluePin, B);
-  
 }
